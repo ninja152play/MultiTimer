@@ -55,7 +55,7 @@ class Gui:
 
         timer_thread = threading.Thread(target=start_timers, daemon=True)
         timer_thread.start()
-        self.file_label.config(text="Timers started. Press hotkeys...")
+        self.file_label.config(text="Timers started. Press hotkeys Ctrl+Esc to stop.")
 
     def on_create(self):
         self.file_name_str = self.file_name.get()
