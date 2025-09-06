@@ -107,8 +107,11 @@ class GuiEdit:
 
     def load_json(self, file_name: str):
         if file_name:
-            with open(f"Timers/{file_name}", "r") as f:
-                return json.load(f)
+            try:
+                with open(f"Timers/{file_name}", "r") as f:
+                    return json.load(f)
+            except:
+                return {}
         else:
             return "No timer selected"
 
