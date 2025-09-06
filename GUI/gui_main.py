@@ -1,4 +1,5 @@
 import os
+import threading
 import tkinter as tk
 from tkinter import ttk
 from GUI.gui_edit import gui_edit
@@ -9,6 +10,7 @@ class Gui:
     def __init__(self, root):
         self.root = root
         self.root.title("Multi-timer")
+        self.timer_system = None
         self.setup()
 
     def setup(self):
@@ -26,23 +28,34 @@ class Gui:
         ttk.Button(button_frame, text="Start work", command=self.on_start).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Create new timer list", command=self.on_create).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Edit timer list", command=self.on_edit).pack(side=tk.LEFT, padx=5)
-        ttk.Button(text="Exit", command=self.on_exit).pack(side=tk.TOP, padx=5)
+        ttk.Button(self.root, text="Exit", command=self.on_exit).pack(pady=5)
 
     def on_load(self):
         path = os.path.join(os.getcwd(), "Timers")
         files = os.listdir(path)
         file_names = ''
         for file in files:
-            file_names += file.split('.')[0] + ", "
+            if file.endswith('.json'):
+                file_names += file.split('.')[0] + ", "
         self.file_label.config(text=file_names)
 
     def on_start(self):
         self.file_name_str = self.file_name.get()
-        self.root.destroy()
-        timer = TimerSystem(self.file_name_str)
-        restart = timer.start()
-        if restart:
-            gui()
+        if not self.file_name_str:
+            self.file_label.config(text="File name is empty")
+            return
+
+        def start_timers():
+            try:
+                self.timer_system = TimerSystem(self.file_name_str)
+                self.timer_system.set_root_window(self.root)  # Передаем главное окно
+                self.timer_system.start()
+            except Exception as e:
+                print(f"Error starting timers: {e}")
+
+        timer_thread = threading.Thread(target=start_timers, daemon=True)
+        timer_thread.start()
+        self.file_label.config(text="Timers started. Press hotkeys...")
 
     def on_create(self):
         self.file_name_str = self.file_name.get()
@@ -54,9 +67,7 @@ class Gui:
                 with open(f"Timers/{file_name}.json", "w") as f:
                     f.write('{"timers": []}')
                 self.root.destroy()
-                restart = gui_create(on_back_callback=gui, file_name=file_name)
-                if restart:
-                    gui()
+                gui_create(on_back_callback=gui, file_name=file_name)
             else:
                 self.file_label.config(text="File is already exist")
 
@@ -66,14 +77,18 @@ class Gui:
         if file_name == "":
             self.file_label.config(text="File name is empty")
         else:
-            self.root.destroy()
-            restart = gui_edit(on_back_callback=gui, file_name=file_name)
-            if restart:
-                gui()
+            if os.path.exists(f"Timers/{file_name}.json"):
+                self.root.destroy()
+                gui_edit(on_back_callback=gui, file_name=file_name)
+            else:
+                self.file_label.config(text="File does not exist")
 
     def on_exit(self):
-        self.root.destroy()
-        return False
+        if self.timer_system:
+            self.timer_system.stop_all()
+        else:
+            self.root.destroy()
+            os._exit(0)
 
 
 def gui():
@@ -106,4 +121,3 @@ def gui_create(on_back_callback=None, file_name=""):
     root = tk.Tk()
     app = GuiCreate(root, on_back_callback=gui, file_name=file_name)
     root.mainloop()
-
