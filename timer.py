@@ -120,8 +120,8 @@ class TimerSystem:
 
         self.status_window = tk.Toplevel(self.root)
         self.status_window.title("Статус таймеров")
-        self.status_window.geometry("400x300")
-        self.status_window.resizable(False, False)
+        self.status_window.geometry("400x350")
+        self.status_window.resizable(False, True)
         self.status_window.attributes('-topmost', True)
 
         # Заголовок
@@ -210,7 +210,7 @@ class TimerSystem:
         """Создает окно уведомления о завершении таймера"""
         timeout_window = tk.Toplevel(self.root)
         timeout_window.title("Таймер завершен")
-        timeout_window.geometry("300x150")
+        timeout_window.geometry("300x250")
         timeout_window.resizable(False, False)
         timeout_window.attributes('-topmost', True)
 
