@@ -52,7 +52,7 @@ class Gui:
         else:
             if not os.path.exists(f"Timers/{file_name}.json"):
                 with open(f"Timers/{file_name}.json", "w") as f:
-                    f.write('\n')
+                    f.write('{"timers": []}')
                 self.root.destroy()
                 restart = gui_create(on_back_callback=gui, file_name=file_name)
                 if restart:
