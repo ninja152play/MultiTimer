@@ -54,6 +54,11 @@ class TimerSystem:
 
         if timer_name in self.active_timers:
             print(f"Таймер {timer_name} уже запущен")
+            restart = "_restart_" + timer_name
+            self.active_timers ={restart: 1}
+            if restart in self.timer_end_times:
+                self.stop_timer(timer_name)
+                self.start_timer(timer_name)
             return
 
         end_time = datetime.now() + timedelta(seconds=timer_config["interval"])
@@ -87,10 +92,18 @@ class TimerSystem:
     def stop_timer(self, timer_name: str):
         """Останавливает таймер"""
         if timer_name in self.active_timers:
+            print(timer_name)
+            print(self.active_timers)
+            restart = "_restart_" + timer_name
+            if restart in self.active_timers:
+                self.active_timers.pop(restart)
+            print(self.active_timers)
             self.active_timers[timer_name].cancel()
+            print(self.active_timers)
             del self.active_timers[timer_name]
             if timer_name in self.timer_end_times:
                 del self.timer_end_times[timer_name]
+
             print(f"⏹️ Таймер '{timer_name}' остановлен")
 
             # Обновляем окно статуса
@@ -284,6 +297,8 @@ class TimerSystem:
         """Останавливает все таймеры"""
         print("\n🛑 Остановка всех таймеров...")
         for timer_name in list(self.active_timers.keys()):
+            if timer_name.startswith("_restart_"):
+                continue
             self.stop_timer(timer_name)
         if self.status_window and self.status_window.winfo_exists():
             self.status_window.destroy()
