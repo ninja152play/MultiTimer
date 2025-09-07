@@ -28,6 +28,7 @@ class Gui:
         ttk.Button(button_frame, text="Start work", command=self.on_start).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Create new timer list", command=self.on_create).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Edit timer list", command=self.on_edit).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text="Stop all timers", command=self.on_stop).pack(side=tk.LEFT, padx=5)
         ttk.Button(self.root, text="Exit", command=self.on_exit).pack(pady=5)
 
     def on_load(self):
@@ -82,6 +83,15 @@ class Gui:
                 gui_edit(on_back_callback=gui, file_name=file_name)
             else:
                 self.file_label.config(text="File does not exist")
+
+    def on_stop(self):
+        """Остановка всех таймеров"""
+        if self.timer_system:
+            self.timer_system.stop_all()
+            self.timer_system = None
+            self.file_label.config(text="Все таймеры остановлены")
+        else:
+            self.file_label.config(text="Система таймеров не запущена")
 
     def on_exit(self):
         if self.timer_system:

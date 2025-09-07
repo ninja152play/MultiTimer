@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import ttk
 from datetime import datetime, timedelta
 from typing import Dict, List, Callable, Any
+from key_code import getkey
 
 
 class TimerSystem:
@@ -54,12 +55,8 @@ class TimerSystem:
 
         if timer_name in self.active_timers:
             print(f"Таймер {timer_name} уже запущен")
-            restart = "_restart_" + timer_name
-            self.active_timers ={restart: 1}
-            if restart in self.timer_end_times:
-                self.stop_timer(timer_name)
-                self.start_timer(timer_name)
-            return
+            self.stop_timer(timer_name)
+
 
         end_time = datetime.now() + timedelta(seconds=timer_config["interval"])
         self.timer_end_times[timer_name] = end_time
@@ -92,14 +89,10 @@ class TimerSystem:
     def stop_timer(self, timer_name: str):
         """Останавливает таймер"""
         if timer_name in self.active_timers:
-            print(timer_name)
-            print(self.active_timers)
             restart = "_restart_" + timer_name
             if restart in self.active_timers:
                 self.active_timers.pop(restart)
-            print(self.active_timers)
             self.active_timers[timer_name].cancel()
-            print(self.active_timers)
             del self.active_timers[timer_name]
             if timer_name in self.timer_end_times:
                 del self.timer_end_times[timer_name]
@@ -307,4 +300,3 @@ class TimerSystem:
         except:
             pass
         print("Все таймеры остановлены")
-        os._exit(0)
