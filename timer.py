@@ -1,13 +1,10 @@
 import json
-import os
-import time
 import threading
 import keyboard
 import tkinter as tk
 from tkinter import ttk
 from datetime import datetime, timedelta
-from typing import Dict, List, Callable, Any
-from key_code import getkey
+from typing import Dict, Any
 
 
 class TimerSystem:
