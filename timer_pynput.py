@@ -164,8 +164,9 @@ class TimerSystem:
         """Создание окна уведомления"""
         window = tk.Toplevel(self.root)
         window.title("Таймер завершен")
-        window.geometry("300x150")
+        window.geometry("300x250")
         window.resizable(False, False)
+        window.attributes("-topmost", True)
 
         # Центрирование
         window.update_idletasks()
@@ -224,6 +225,7 @@ class TimerSystem:
         self.status_window.title("Статус таймеров")
         self.status_window.geometry("500x400")
         self.status_window.resizable(True, True)
+        self.status_window.attributes("-topmost", True)
 
         # Заголовок
         header = ttk.Label(self.status_window, text="⏰ Активные таймеры",
