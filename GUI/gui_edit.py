@@ -54,8 +54,11 @@ class GuiEdit:
     def assign_key(self, event):
         key = event.keysym
         key_code = event.keycode
+        print(f"Key pressed: {key}, Key code: {key_code}")
 
-        self.timer_key = getkey(key_code)
+        self.timer_key = getkey(key_code, key)
+        print(f"Assigned key: {self.timer_key}")
+
         if self.timer_key is None:
             self.status_label.config(text=f"Эта клавиша не поддерживается: {key}")
         else:
@@ -65,7 +68,23 @@ class GuiEdit:
         self.bind_button.config(state="normal")
 
     def on_add(self):
-        timer = {'name': self.timer_name.get(), 'interval': int(self.timer_interval.get()), 'callback': f'{self.timer_name.get()}Callback', 'key': self.timer_key}
+        new_key = self.timer_key
+        new_name = self.timer_name.get()
+
+        for timer in self.data["timers"]:
+            if timer["key"] == new_key:
+                self.error_label.config(
+                    text=f"Ошибка: Клавиша {new_key} уже используется для таймера '{timer['name']}'")
+                return
+            if timer["name"] == new_name:
+                self.error_label.config(text=f"Ошибка: Таймер с именем '{new_name}' уже существует")
+                return
+
+        timer = {
+            'name': new_name,
+            'interval': int(self.timer_interval.get()),
+            'key': new_key
+        }
         self.data["timers"].append(timer)
         self.save_json(self.data)
         self.root.destroy()

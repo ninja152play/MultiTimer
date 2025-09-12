@@ -3,7 +3,7 @@ import threading
 import tkinter as tk
 from tkinter import ttk
 from GUI.gui_edit import gui_edit
-from timer import TimerSystem
+from timer_pynput import TimerSystem
 
 
 class Gui:
@@ -87,7 +87,7 @@ class Gui:
     def on_stop(self):
         """Остановка всех таймеров"""
         if self.timer_system:
-            self.timer_system.stop_all()
+            self.timer_system.stop()
             self.timer_system = None
             self.file_label.config(text="Все таймеры остановлены")
         else:
@@ -95,7 +95,7 @@ class Gui:
 
     def on_exit(self):
         if self.timer_system:
-            self.timer_system.stop_all()
+            self.timer_system.stop()
         else:
             self.root.destroy()
             os._exit(0)
